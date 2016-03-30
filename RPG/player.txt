@@ -1,0 +1,2 @@
+Name Player Health 100 Mana 20 EXP 0 Weapon none Armor none Strength 1 Agility 1 Magic 1 endLine
+end

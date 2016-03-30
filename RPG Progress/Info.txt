@@ -1,0 +1,26 @@
+This is the progress that I have been making on my RPG project.
+
+LOG:
+
+27/03/2016:
+Start of progress log.
+
+Based basic framework on Rookie kit 2013.
+added multiple .py files for various uses.
+added multiple .txt files for various uses.
+changed how evolve functions work, now can work at different times without reinitiallizing
+changed display to be larger
+created new evolve function for battle sequences
+created new draw function for battle sequences
+added basic menu for battle
+added basic access to battle menu
+added collision with an entity begins battle sequences
+added visibility for enemies
+added visibiliy for player and allies
+added ability to save players and enemies
+added various drawing functions
+
+
+MISC:
+
+Snipping tool run - snippingtool

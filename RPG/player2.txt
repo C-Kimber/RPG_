@@ -1,0 +1,2 @@
+Name Player2 Health 100 EXP 0 Weapon none Armor none Strength 1 Agility 1 Magic 1 endLine
+end

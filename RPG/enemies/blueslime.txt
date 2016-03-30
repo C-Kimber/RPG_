@@ -1,0 +1,2 @@
+Health 10 Mana 0.0 Strength 1 Agility 1 Magic 1 endLine
+end
