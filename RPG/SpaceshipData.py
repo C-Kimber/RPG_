@@ -7,6 +7,7 @@ from enemy import Enemy
 import filestuff as FS
 import drawstuff as Draw
 
+
 class SpaceshipData:
 
     def __init__(self,width,height,frame_rate):
@@ -37,6 +38,8 @@ class SpaceshipData:
         self.baddie_color = (255,0,0)
         self.battle = 0
         self.text = 0
+        
+        self.players = [self.player, self.player2, self.player3]
 
         self.enemy1= None
         self.enemy2 = None
@@ -46,6 +49,7 @@ class SpaceshipData:
         self.enemy_width = 50
         self.enemy_height = 50
         self.enemy_color = (255,0,0)
+        self.eslots = []
 
         self.number = 10
         self.itemAt =1
@@ -57,7 +61,7 @@ class SpaceshipData:
 
         self.badMemTurn = 0
         self.currentBad = None
-        self.selectedPlayer = 1
+        self.selectedPlayerAt = 1
         self.selectedBad = self.enemy1
         self.selectedBadAt = 1
         self.badnum = 0
@@ -90,13 +94,13 @@ class SpaceshipData:
         if pygame.K_p in newkeys:
             FS.save(self.spaceship)
             print "Saving..."
-        if pygame.K_LEFT in keys:
+        if pygame.K_a in keys:
             self.spaceship.moveLeft(self.spaceship_speed)
-        if pygame.K_RIGHT in keys:
+        if pygame.K_d in keys:
             self.spaceship.moveRight(self.spaceship_speed)
-        if pygame.K_UP in keys:
+        if pygame.K_w in keys:
             self.spaceship.moveUp(self.spaceship_speed)
-        if pygame.K_DOWN in keys:
+        if pygame.K_s in keys:
             self.spaceship.moveDown(self.spaceship_speed)
         if pygame.K_y in newkeys:
             self.battle = -1
@@ -165,34 +169,50 @@ class SpaceshipData:
             self.turn = 0
 
         if(self.enemyLoaded == 0):
+            self.enemies = [None, None, None]
             self.enemy1 = Enemy( self.enemy_width, self.enemy_height, self.width-300, 200, (255,0,0),"redslime.txt" )
             self.enemy2 = Enemy( self.enemy_width, self.enemy_height, self.width-200, 200, (0,255,0),"greenslime.txt" )
             self.enemy3 = Enemy( self.enemy_width, self.enemy_height, self.width-100, 200, (0,0,255),"blueslime.txt" )
+            self.enemies[0]=self.enemy1
+            self.enemies[1]=self.enemy2
+            self.enemies[2]=self.enemy3
+            self.eslots= [self.enemy1, self.enemy2, self.enemy3]
             self.enemyLoaded = 1
 
-        self.enemies = [None,None,None]
-        self.enemies[0]=self.enemy1
-        self.enemies[1]=self.enemy2
-        self.enemies[2]=self.enemy3
 
-        if (self.enemies[0] != None):
-            if(self.enemies[0].health <=0):
-                self.enemies[0] = None
-                self.badnum -= 1
-                self.selectedBadAt -=1
-        if (self.enemies[1] != None):
-            if(self.enemies[1].health <=0):
-                self.enemies[1] = None
-                self.badnum -= 1
-                self.selectedBadAt -=1
-        if (self.enemies[2] != None):
-            if(self.enemies[2].health <=0):
-                self.enemies[2] = None
-                self.badnum -= 1
-                self.selectedBadAt -=1
 
-        if(self.enemies == [None, None, None]):
+
+        if(self.eslots == [None, None, None]):
             self.battle = 0
+            self.enemyLoaded = 0
+            print "Win!"
+
+        if (self.eslots[0] != None):
+            if(self.eslots[0].health <=0):
+                self.eslots[0] = None
+                self.badnum -= 1
+                if (self.eslots[2] != None):
+                    self.selectedBadAt -=1
+                else:
+                    self.selectedBadAt += 1
+        if (self.eslots[1] != None):
+            if(self.eslots[1].health <=0):
+                self.eslots[1] = None
+                self.badnum -= 1
+                if (self.eslots[0] != None):
+                    self.selectedBadAt -=1
+                else:
+                    self.selectedBadAt += 1
+        if (self.eslots[2] != None):
+            if(self.eslots[2].health <=0):
+                self.eslots[2] = None
+                self.badnum -= 1
+                if(self.eslots[1]!= None):
+                    self.selectedBadAt -=1
+                else:
+                    self.selectedBadAt += 1
+
+        print self.selectedBadAt
 
         if(self.turn == 1):
             if(self.member_turn == 1 or self.member_turn == 2 or self.member_turn == 3):
@@ -228,48 +248,48 @@ class SpaceshipData:
                 n = 0
                 while(n == 0):
                     self.badnum = 0
-                    if (self.enemies[0] != None):
+                    if (self.eslots[0] != None):
                         self.badnum += 1
-                    if (self.enemies[1] != None):
+                    if (self.eslots[1] != None):
                        self.badnum += 1
-                    if (self.enemies[2] != None):
+                    if (self.eslots[2] != None):
                         self.badnum += 1
 
                     n = 1
-                print self.selectedBadAt
+
                 if(self.selectedBadAt <= 0):
                     a = 0
-                    for _ in self.enemies:
-                        if(self.enemies[a] != None):
+                    for _ in self.eslots:
+                        if(self.eslots[a] != None):
                             self.selectedBadAt =  self.badnum
                         a+= 1
                 if(self.selectedBadAt > self.badnum):
                     f = 0
-                    for _ in self.enemies:
-                        if(self.enemies[f] != None):
+                    for _ in self.eslots:
+                        if(self.eslots[f] != None):
                             self.selectedBadAt = f- self.badnum +2
                         f+= 1
 
                 if(self.selectedBadAt == 1):
-                    if (self.enemies[0] != None):
+                    if (self.eslots[0] != None):
                         self.selectedBad = self.enemy1
                     else:
                         self.selectedBadAt =2
                 elif(self.selectedBadAt == 2):
-                    if (self.enemies[1] != None):
+                    if (self.eslots[1] != None):
                         self.selectedBad = self.enemy2
                     else:
                         self.selectedBadAt =3
                 elif(self.selectedBadAt == 3):
-                    if (self.enemies[2] != None):
+                    if (self.eslots[2] != None):
                         self.selectedBad = self.enemy3
                     else:
                         self.selectedBadAt =1
 
                 if(self.y2On == 1 or self.a2On == 1):
-                        if pygame.K_LEFT in newkeys:
+                        if pygame.K_a in newkeys:
                             self.selectedBadAt -= 1
-                        if pygame.K_RIGHT in newkeys:
+                        if pygame.K_d in newkeys:
                             self.selectedBadAt += 1
                 if pygame.K_j in newkeys:
                     if(self.y2On == 1):
@@ -343,19 +363,45 @@ class SpaceshipData:
                         self.aOn = 0
 
                 if(self.xOn==1):
-                    if pygame.K_DOWN in newkeys:
+                    if pygame.K_s in newkeys:
                         self.itemAt += 1
-                    if pygame.K_UP in newkeys:
+                    if pygame.K_w in newkeys:
                         self.itemAt -= 1
 
                 if(self.yOn==1):
-                    if pygame.K_DOWN in newkeys:
+                    if pygame.K_s in newkeys:
                         self.specialAt += 1
-                    if pygame.K_UP in newkeys:
+                    if pygame.K_w in newkeys:
                         self.specialAt -= 1
         else:
+            if(self.selectedPlayerAt == 1):
+                if (self.players[0] != None):
+                    self.selectedPlayer = self.player
+                else:
+                    self.selectedPlayerAt =2
+            elif(self.selectedPlayerAt == 2):
+                if (self.players[1] != None):
+                    self.selectedPlayer = self.player2
+                else:
+                    self.selectedPlayerAt =3
+            elif(self.selectedPlayerAt == 3):
+                if (self.players[2] != None):
+                    self.selectedPlayer = self.player3
+                else:
+                    self.selectedPlayerAt =1
+            
+            
+            
             self.currentBad = self.enemy1
-            print 'Enemy went!'
+            if( self.eslots[0] != None):
+                self.selectedPlayer = self.players[random.randint(-1,2)]
+                self.selectedPlayer.health -= 3
+            if( self.eslots[0] != None):
+                self.selectedPlayer = self.players[random.randint(-1,2)]
+                self.selectedPlayer.health -= 3
+            if( self.eslots[0] != None):
+                self.selectedPlayer = self.players[random.randint(-1,2)]
+                self.selectedPlayer.health -= 3
             self.turn = 1
 
         n = len(self.specials)
@@ -404,7 +450,7 @@ class SpaceshipData:
 
     def battleDraw(self,surface):
         rect = pygame.Rect(0,0,self.width,self.height)
-        surface.fill((100,100,255),rect )
+        surface.fill((175,175,50),rect )
 
         self.player.draw(surface)
         self.drawTextLeft(surface, str(self.player.health),(0,0,0),10,300,self.font3)
@@ -413,15 +459,18 @@ class SpaceshipData:
         self.player3.draw(surface)
         self.drawTextLeft(surface, str(self.player3.health),(0,0,0),10,200,self.font3)
         self.currentPlayer.draw(surface)
-        for e in self.enemies:
-            if (e != "None" or e != None):
-                self.drawTextLeft(surface, str(e.health),(0,0,0),e.x,e.y - 70,self.font3)
+        for e in self.eslots:
+
+             if (e == "None" or e == None):
+                continue
+             else:
                 e.draw(surface)
+
         if(self.turn == 1):
             if(self.member_turn == 1 or self.member_turn == 2 or self.member_turn == 3):
                 if (self.y2On == 1 or self.a2On == 1):
                     if ( self.selectedBad != None):
-                        Draw.drawRect(surface,self.selectedBad.x,self.selectedBad.y-50, 50,10,(0,0,0))
+                        Draw.drawRect(surface,self.selectedBad.x,self.selectedBad.y+55, 50,10,(0,150,155))
                         Draw.drawBREct(surface,100, 50,150, 50)
                         self.drawTextLeft(surface, self.selectedBad.name,(0,0,0),105,95,self.font3)
 
